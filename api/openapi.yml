@@ -1,0 +1,473 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Trady App API page
+paths:
+  /:
+    get:
+      summary: home page
+      description: A home page.
+      tags:
+        - Home
+      responses:
+        "200":
+          description: A home page response
+  /api/user:
+    post:
+      summary: Create a single user
+      description: Create a single user in db
+      tags:
+        - User
+      responses:
+        "201":
+          description: A User has been created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                nickname:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                contactNum:
+                  type: string
+                password:
+                  type: string
+                  format: password
+                stAddress:
+                  type: string
+                city:
+                  type: string
+                postCode:
+                  type: string
+                bookings:
+                  type: array
+                  items:
+                    type: string
+                orders:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - firstName
+                - lastName
+                - email
+                - contactNum
+                - pwd
+                - stAddress
+                - city
+                - postCode
+  /api/user/update:
+    post:
+      summary: update user info
+      description: update an existed user info in db.
+      tags:
+        - Update
+      responses:
+        "201":
+          description: User information updated successfully!
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+
+                number:
+                  type: string
+
+              required:
+                - id
+                - firstName
+                - lastName
+                - email
+                - number
+  /api/user/updatepwd:
+    post:
+      summary: update users password
+      description: update users password in DB.
+      tags:
+        - Update
+      responses:
+        "201":
+          description: password update successfully!
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+
+                password:
+                  type: string
+                  format: password
+
+              required:
+                - id
+                - password
+
+  /api/login:
+    post:
+      summary: User Log in
+      description: Log the user into website
+      tags:
+        - Login
+      responses:
+        "201":
+          description: Login success!
+        "401":
+          description: Password is not correct!
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+
+                password:
+                  type: string
+                  format: password
+
+              required:
+                - email
+                - pwd
+
+  /api/user/checkpwd:
+    post:
+      summary: Check password when update
+      description: Check password in my account page
+      tags:
+        - Check
+      responses:
+        "201":
+          description: success!
+        "401":
+          description: Password is not correct!
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+
+                password:
+                  type: string
+                  format: password
+
+              required:
+                - id
+                - pwd
+
+  /api/user/{userId}:
+    get:
+      summary: Fetch a given userId's basic info
+      description: Fetch a given userId's basic info, excluding upcoming bookings and orders, please use API under the respective tags
+      tags:
+        - User
+      responses:
+        "200":
+          description: User's account info has been successfully retrieved
+      parameters:
+        - in: path
+          name: userId
+          description: user's ObjectId
+          required: true
+          schema:
+            type: string
+  /api/pro:
+    post:
+      summary: Create a single pro
+      description: Create a single pro in db
+      tags:
+        - Pro
+      responses:
+        "201":
+          description: A new pro has been created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                contactNum:
+                  type: string
+                pwd:
+                  type: string
+                  format: password
+                stAddress:
+                  type: string
+                city:
+                  type: string
+                postCode:
+                  type: string
+                serviceType:
+                  type: string
+                availability:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      startDate:
+                        type: string
+                        format: date
+                      startSession:
+                        type: number
+                      endDate:
+                        type: string
+                        format: date
+                      endSession:
+                        type: number
+              required:
+                - firstName
+                - lastName
+                - email
+                - contactNum
+                - pwd
+                - stAddress
+                - city
+                - postCode
+  /api/pro/{proId}:
+    get:
+      summary: Fetch a given proId's info
+      description: Fetch a given proId's basic info including personal info and availability, excluding upcoming bookings, please use the API under Booking tag
+      tags:
+        - Pro
+      responses:
+        "200":
+          description: successfully fetched given pro's account info and availability
+      parameters:
+        - in: path
+          name: proId
+          description: pro's ObjectId in db
+          required: true
+          schema:
+            type: string
+  /api/pro/avail:
+    post:
+      summary: Query all pros with matching criteria
+      description: List all pros with matched type and availability
+      tags:
+        - Pro
+      responses:
+        "200":
+          description: The results are all the pros with matching availability
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                serviceType:
+                  type: string
+                bookingDate:
+                  type: string
+                  format: date
+                startSession:
+                  type: integer
+                  format: int32
+                endSession:
+                  type: integer
+                  format: int32
+  /api/pro/{proId}/avail:
+    put:
+      summary: update a given pro's availability
+      description: query a given proId and update its availability
+      tags:
+        - Pro
+      responses:
+        "201":
+          description: successfully updated the availability
+      parameters:
+        - in: path
+          name: proId
+          description: pro's ObjectId in db
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  startDate:
+                    type: string
+                    format: date
+                  startSession:
+                    type: integer
+                    format: int32
+                  endDate:
+                    type: string
+                    format: date
+                  endSession:
+                    type: integer
+                    format: int32
+
+  /api/booking:
+    post:
+      summary: create a single booking
+      description: create a single booking, for simplicity's sake, only same day, non-repetitive job is supported
+      tags:
+        - Booking
+      responses:
+        "201":
+          description: The booking with our pro has been successfully created.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerId:
+                  type: string
+                proId:
+                  type: string
+                bookingDate:
+                  type: string
+                  format: date
+                startSession:
+                  type: number
+                endSession:
+                  type: number
+                notes:
+                  type: string
+              required:
+                - customerId
+                - proId
+                - bookingDate
+                - startSession
+                - endSession
+    put:
+      summary: submit feedback and rating info when the job is done
+      description: submit feedback and rating info for given bookingId
+      tags:
+        - Booking
+      responses:
+        "201":
+          description: Feedback and rating have been submitted
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bookingId:
+                  type: string
+                feedback:
+                  type: string
+                rating:
+                  type: integer
+                  format: int32
+                status:
+                  type: string
+              required:
+                - bookingId
+                - rating
+                - status
+                - feedback
+  /api/bookings/pro/{proId}:
+    get:
+      summary: List all bookings of a given proId
+      description: List all bookings of a given proId
+      tags:
+        - Booking
+      responses:
+        "200":
+          description: These are all the bookings of this pro
+      parameters:
+        - in: path
+          name: proId
+          description: Pro's ObjectId in db
+          required: true
+          schema:
+            type: string
+  /api/bookings/user/{userId}:
+    get:
+      summary: List all of a user's bookings
+      description: List all of a given user id's bookings
+      tags:
+        - Booking
+      responses:
+        "200":
+          description: These are this user's bookings
+      parameters:
+        - in: path
+          name: userId
+          description: User's ObjectId in db
+          required: true
+          schema:
+            type: string
+  /api/wishlist/{id}:
+    post:
+      summary: change all a user's shopping cart
+      description: change all a user's shopping cart
+      tags:
+        - wishlist
+      parameters:
+        - in: path
+          name: id
+          description: id of user
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: changed wishlist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/orderhistory/{id}:
+    post:
+      summary: changed a user's orderHistory
+      description: change all a user's orderHistory
+      tags:
+        - orderHistory
+      parameters:
+        - in: path
+          name: id
+          description: id of user
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: changed orderHistory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
